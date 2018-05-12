@@ -34,7 +34,6 @@ public class DozeSettings extends PreferenceActivity implements OnPreferenceChan
     private Context mContext;
 
     private SwitchPreference mAmbientDisplayPreference;
-    private SwitchPreference mPickUpPreference;
     private SwitchPreference mHandwavePreference;
     private SwitchPreference mPocketPreference;
 
@@ -50,10 +49,6 @@ public class DozeSettings extends PreferenceActivity implements OnPreferenceChan
         // Read from DOZE_ENABLED secure setting
         mAmbientDisplayPreference.setChecked(dozeEnabled);
         mAmbientDisplayPreference.setOnPreferenceChangeListener(this);
-
-        mPickUpPreference =
-            (SwitchPreference) findPreference(Utils.PICK_UP_KEY);
-        mPickUpPreference.setOnPreferenceChangeListener(this);
 
         mHandwavePreference =
             (SwitchPreference) findPreference(Utils.GESTURE_HAND_WAVE_KEY);
@@ -88,10 +83,6 @@ public class DozeSettings extends PreferenceActivity implements OnPreferenceChan
         if (Utils.AMBIENT_DISPLAY_KEY.equals(key)) {
             mAmbientDisplayPreference.setChecked(value);
             Utils.enableDoze(value, mContext);
-            return true;
-        } else if (Utils.PICK_UP_KEY.equals(key)) {
-            mPickUpPreference.setChecked(value);
-            Utils.startService(mContext);
             return true;
         } else if (Utils.GESTURE_HAND_WAVE_KEY.equals(key)) {
             mHandwavePreference.setChecked(value);
