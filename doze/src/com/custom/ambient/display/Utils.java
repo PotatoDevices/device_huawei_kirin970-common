@@ -39,7 +39,19 @@ public final class Utils {
 
     protected static void startService(Context context) {
         if (DEBUG) Log.d(TAG, "Starting service");
-        context.startService(new Intent(context, DozeService.class));
+        if (!isServiceRunning(DozeService.class, context)) {
+            context.startService(new Intent(context, DozeService.class));
+        }
+    }
+
+    private static boolean isServiceRunning(Class<?> serviceClass, Context context) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected static void stopService(Context context) {
@@ -52,31 +64,49 @@ public final class Utils {
                 Settings.Secure.DOZE_ENABLED, 1) != 0;
     }
 
+    protected static boolean handwaveGestureEnabled(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.CUSTOM_AMBIENT_HANDWAVE_GESTURE, 0) != 0;
+    }
+
+    protected static boolean pocketGestureEnabled(Context context) {
+        return Settings.System.getInt(context.getContentResolver(),
+                Settings.System.CUSTOM_AMBIENT_POCKETMODE_GESTURE, 0) != 0;
+    }
+
     protected static boolean enableDoze(boolean enable, Context context) {
-        boolean dozeEnabled = Settings.Secure.putInt(context.getContentResolver(),
+        boolean enabled = Settings.Secure.putInt(context.getContentResolver(),
                 Settings.Secure.DOZE_ENABLED, enable ? 1 : 0);
-        if (enable) {
+        // don't start the service, for notifications pulse we don't need the proximity sensor check here
+        return enabled;
+    }
+
+    protected static boolean enableHandWave(boolean enable, Context context) {
+        boolean enabled = Settings.System.putInt(context.getContentResolver(),
+                Settings.System.CUSTOM_AMBIENT_HANDWAVE_GESTURE, enable ? 1 : 0);
+        manageService(context);
+        return enabled;
+    }
+
+    protected static boolean enablePocketMode(boolean enable, Context context) {
+        boolean enabled = Settings.System.putInt(context.getContentResolver(),
+                Settings.System.CUSTOM_AMBIENT_POCKETMODE_GESTURE, enable ? 1 : 0);
+        manageService(context);
+        return enabled;
+    }
+
+    private static void manageService(Context context) {
+        if (sensorsEnabled(context)) {
             startService(context);
         } else {
             stopService(context);
         }
-        return dozeEnabled;
     }
 
     protected static void launchDozePulse(Context context) {
         if (DEBUG) Log.d(TAG, "Launch doze pulse");
         context.sendBroadcastAsUser(new Intent(DOZE_INTENT),
                 new UserHandle(UserHandle.USER_CURRENT));
-    }
-
-    protected static boolean handwaveGestureEnabled(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(GESTURE_HAND_WAVE_KEY, false);
-    }
-
-    protected static boolean pocketGestureEnabled(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(GESTURE_POCKET_KEY, false);
     }
 
     protected static boolean sensorsEnabled(Context context) {
