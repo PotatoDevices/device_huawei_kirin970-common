@@ -45,16 +45,17 @@ public class DozeSettings extends PreferenceActivity implements OnPreferenceChan
 
         mAmbientDisplayPreference =
             (SwitchPreference) findPreference(Utils.AMBIENT_DISPLAY_KEY);
-        // Read from DOZE_ENABLED secure setting
         mAmbientDisplayPreference.setChecked(Utils.isDozeEnabled(mContext));
         mAmbientDisplayPreference.setOnPreferenceChangeListener(this);
 
         mHandwavePreference =
             (SwitchPreference) findPreference(Utils.GESTURE_HAND_WAVE_KEY);
+        mHandwavePreference.setChecked(Utils.handwaveGestureEnabled(mContext));
         mHandwavePreference.setOnPreferenceChangeListener(this);
 
         mPocketPreference =
             (SwitchPreference) findPreference(Utils.GESTURE_POCKET_KEY);
+        mPocketPreference.setChecked(Utils.pocketGestureEnabled(mContext));
         mPocketPreference.setOnPreferenceChangeListener(this);
 
         final ActionBar actionBar = getActionBar();
@@ -85,11 +86,11 @@ public class DozeSettings extends PreferenceActivity implements OnPreferenceChan
             return true;
         } else if (Utils.GESTURE_HAND_WAVE_KEY.equals(key)) {
             mHandwavePreference.setChecked(value);
-            Utils.startService(mContext);
+            Utils.enableHandWave(value, mContext);
             return true;
         } else if (Utils.GESTURE_POCKET_KEY.equals(key)) {
             mPocketPreference.setChecked(value);
-            Utils.startService(mContext);
+            Utils.enablePocketMode(value, mContext);
             return true;
         }
         return false;
