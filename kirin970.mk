@@ -99,7 +99,9 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/HwCamera2/lib64/libHwPostCamera_jni.so:system/lib64/libHwPostCamera_jni.so
 
 PRODUCT_PACKAGES += \
-    HwCamera2
+    HwCamera2 \
+    HotwordEnrollmentOKGoogleHI6403 \
+    HotwordEnrollmentXGoogleHI6403
 
 # VNDK
 PRODUCT_COPY_FILES += \
