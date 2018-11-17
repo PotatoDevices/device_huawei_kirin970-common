@@ -1,0 +1,7 @@
+[
+  {
+    "repository": "berkeley-pie/proprietary_vendor_huawei_kirin970-common",
+    "target_path": "vendor/huawei/kirin970-common",
+    "branch": "pie"
+  }
+]
