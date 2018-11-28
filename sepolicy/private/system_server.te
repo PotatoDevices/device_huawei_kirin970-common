@@ -7,4 +7,7 @@ allow system_server display_engine_service:service_manager find;
 # Allow system server to change fingerprint nav properties
 allow system_server sys_fpnav_enabled_prop:property_service set;
 
+# Allow system server to read charging values
+allow system_server sysfs:file read;
+
 allow system_server sysfs_zram:lnk_file read;
