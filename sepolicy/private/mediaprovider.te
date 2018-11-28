@@ -1,1 +1,1 @@
-allow mediaprovider device:file {open read };
+allow mediaprovider device:file { open read };
